@@ -102,6 +102,8 @@ vim.g.netrw_browse_split = 4
 --  % si c'est positif, valeur absolue si c'est negatif
 vim.g.netrw_wiw = 15
 vim.g.netrw_winsize = 15
+vim.opt.foldmethod = 'expr'
+vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
 -- end modifs rodgeur
 --
 -- [[ Basic Keymaps ]]
@@ -546,6 +548,7 @@ require('lazy').setup({
       vim.list_extend(ensure_installed, {
         'lua-language-server', -- Lua Language server
         'stylua', -- Used to format Lua code
+        'ltex-ls-plus',
         -- You can add other tools here that you want Mason to install
       })
 
@@ -583,6 +586,23 @@ require('lazy').setup({
         },
       })
       vim.lsp.enable 'lua_ls'
+      vim.lsp.config('ltex_plus', {
+        settings = {
+          ltex = {
+            language = 'fr',
+            hiddenFalsePositives = {
+              fr = {
+                { rule = 'FRENCH_WHITESPACE', sentence = '^\\:\\:' },
+                { rule = 'ESPACE_APRES_POINT', sentence = '\\.incremental' },
+                { rule = 'ESPACE_APRES_POINT', sentence = '\\.center' },
+                { rule = 'ESPACE_APRES_POINT', sentence = '\\.fragment' },
+                { rule = 'ESPACE_APRES_POINT', sentence = '\\.callout' },
+              },
+            },
+          },
+        },
+      })
+      vim.lsp.enable 'ltex_plus'
     end,
   },
 
