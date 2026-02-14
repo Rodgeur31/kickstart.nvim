@@ -98,10 +98,12 @@ vim.o.confirm = true
 
 -- modifs rodgeur
 vim.o.wrap = false
-vim.g.netrw_browse_split = 4
 --  % si c'est positif, valeur absolue si c'est negatif
+vim.g.netrw_preview = 1
+vim.g.netrw_liststyle = 3
 vim.g.netrw_wiw = 15
 vim.g.netrw_winsize = 15
+vim.g.netrw_browse_split = 4
 vim.opt.foldmethod = 'expr'
 vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
 -- end modifs rodgeur
@@ -590,6 +592,9 @@ require('lazy').setup({
         settings = {
           ltex = {
             language = 'fr',
+            dictionary = {
+              ['fr'] = { 'Neovim', 'LSP', 'Markdown', 'ansible', 'gemini', 'playbook' },
+            },
             hiddenFalsePositives = {
               fr = {
                 { rule = 'FRENCH_WHITESPACE', sentence = '^\\:\\:' },
@@ -864,6 +869,24 @@ require('lazy').setup({
           path = '~/notes/work',
         },
       },
+    },
+  },
+  {
+    'NeogitOrg/neogit',
+    lazy = true,
+    dependencies = {
+      'nvim-lua/plenary.nvim', -- required
+      'sindrets/diffview.nvim', -- optional - Diff integration
+
+      -- Only one of these is needed.
+      'nvim-telescope/telescope.nvim', -- optional
+      -- 'ibhagwan/fzf-lua', -- optional
+      -- 'nvim-mini/mini.pick', -- optional
+      -- 'folke/snacks.nvim', -- optional
+    },
+    cmd = 'Neogit',
+    keys = {
+      { '<leader>gg', '<cmd>Neogit<cr>', desc = 'Show Neogit UI' },
     },
   },
 }, {
