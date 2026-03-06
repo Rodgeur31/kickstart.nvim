@@ -99,13 +99,14 @@ vim.o.confirm = true
 -- modifs rodgeur
 vim.o.wrap = false
 --  % si c'est positif, valeur absolue si c'est negatif
-vim.g.netrw_preview = 1
+vim.g.netrw_preview = 0
 vim.g.netrw_liststyle = 3
 vim.g.netrw_wiw = 15
 vim.g.netrw_winsize = 15
 vim.g.netrw_browse_split = 4
-vim.opt.foldmethod = 'expr'
-vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+vim.wo.foldmethod = 'expr'
+vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+--
 -- end modifs rodgeur
 --
 -- [[ Basic Keymaps ]]
@@ -551,6 +552,8 @@ require('lazy').setup({
         'lua-language-server', -- Lua Language server
         'stylua', -- Used to format Lua code
         'ltex-ls-plus',
+        'julia-lsp',
+        'python-lsp-server',
         -- You can add other tools here that you want Mason to install
       })
 
@@ -608,6 +611,7 @@ require('lazy').setup({
         },
       })
       vim.lsp.enable 'ltex_plus'
+      vim.lsp.enable 'julials'
     end,
   },
 
@@ -705,8 +709,24 @@ require('lazy').setup({
         -- <c-k>: Toggle signature help
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
-        preset = 'default',
+        -- On désactive le preset par défaut pour avoir le contrôle total
+        preset = 'none',
 
+        -- On définit manuellement ce qu'on veut garder
+        ['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' },
+        ['<C-e>'] = { 'hide' },
+        ['<C-y>'] = { 'select_and_accept' },
+
+        -- On utilise les flèches ou d'autres touches pour naviguer
+        -- en laissant <C-k> libre pour les digraphs
+        ['<Up>'] = { 'select_prev', 'fallback' },
+        ['<Down>'] = { 'select_next', 'fallback' },
+        ['<C-p>'] = { 'select_prev', 'fallback' },
+        ['<C-n>'] = { 'select_next', 'fallback' },
+
+        -- Documentation
+        ['<C-b>'] = { 'scroll_documentation_up', 'fallback' },
+        ['<C-f>'] = { 'scroll_documentation_down', 'fallback' },
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
       },
@@ -807,7 +827,7 @@ require('lazy').setup({
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     config = function()
-      local filetypes = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+      local filetypes = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'python' }
       require('nvim-treesitter').install(filetypes)
       vim.api.nvim_create_autocmd('FileType', {
         pattern = filetypes,
@@ -831,7 +851,9 @@ require('lazy').setup({
   -- require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
-
+  {
+    'junegunn/vim-easy-align',
+  },
   {
     'p00f/alabaster.nvim',
     config = function() vim.cmd.colorscheme 'alabaster' end,
