@@ -29,7 +29,7 @@ vim.g.have_nerd_font = false
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
-
+vim.o.termguicolors = true
 -- Make line numbers default
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
@@ -192,22 +192,6 @@ rtp:prepend(lazypath)
 require('lazy').setup({
   -- NOTE: Plugins can be added via a link or github org/name. To run setup automatically, use `opts = {}`
   { 'NMAC427/guess-indent.nvim', opts = {} },
-
-  -- Alternatively, use `config = function() ... end` for full control over the configuration.
-  -- If you prefer to call `setup` explicitly, use:
-  --    {
-  --        'lewis6991/gitsigns.nvim',
-  --        config = function()
-  --            require('gitsigns').setup({
-  --                -- Your gitsigns configuration here
-  --            })
-  --        end,
-  --    }
-  --
-  -- Here is a more advanced example where we pass configuration
-  -- options to `gitsigns.nvim`.
-  --
-  -- See `:help gitsigns` to understand what the configuration keys do
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     ---@module 'gitsigns'
@@ -415,8 +399,7 @@ require('lazy').setup({
   },
 
   -- LSP Plugins
-  {
-    -- Main LSP Configuration
+  { -- Main LSP Configuration
     'neovim/nvim-lspconfig',
     dependencies = {
       -- Automatically install LSPs and related tools to stdpath for Neovim
@@ -547,7 +530,31 @@ require('lazy').setup({
         -- ts_ls = {},
 
         stylua = {}, -- Used to format Lua code
-
+        pylsp = {
+          settings = {
+            pylsp = {
+              plugins = {
+                -- Configuration de pycodestyle (le linter par défaut)
+                pycodestyle = {
+                  maxLineLength = 100,
+                  ignore = { 'E203' }, -- Optionnel : utile si vous utilisez Black
+                },
+                -- Si vous utilisez flake8 au sein de pylsp
+                flake8 = {
+                  maxLineLength = 100,
+                },
+                -- Si vous utilisez black pour le formatage via pylsp
+                black = {
+                  line_length = 100,
+                },
+                -- Si vous utilisez autopep8
+                autopep8 = {
+                  maxLineLength = 100,
+                },
+              },
+            },
+          },
+        },
         -- Special Lua Config, as recommended by neovim help docs
         lua_ls = {
           on_init = function(client)
@@ -657,7 +664,7 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
+        python = { 'isort', 'black' },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
@@ -774,30 +781,8 @@ require('lazy').setup({
     },
   },
 
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
-    config = function()
-      ---@diagnostic disable-next-line: missing-fields
-      require('tokyonight').setup {
-        styles = {
-          comments = { italic = false }, -- Disable italics in comments
-        },
-      }
-
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
-    end,
-  },
-
   -- Highlight todo, notes, etc in comments
-  {
+  { -- todo/comments
     'folke/todo-comments.nvim',
     event = 'VimEnter',
     dependencies = { 'nvim-lua/plenary.nvim' },
@@ -807,7 +792,7 @@ require('lazy').setup({
     opts = { signs = false },
   },
 
-  { -- Collection of various small independent plugins/modules
+  { -- (mini.nvim) Collection of various small independent plugins/modules
     'nvim-mini/mini.nvim',
     config = function()
       -- Better Around/Inside textobjects
@@ -850,7 +835,7 @@ require('lazy').setup({
     branch = 'main',
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter-intro`
     config = function()
-      local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'python' }
+      local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'python', 'julia' }
       require('nvim-treesitter').install(parsers)
       vim.api.nvim_create_autocmd('FileType', {
         callback = function(args)
@@ -876,29 +861,18 @@ require('lazy').setup({
     end,
   },
 
-  -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
-  -- init.lua. If you want these files, they are in the repository, so you can just download them and
-  -- place them in the correct locations.
-
   -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
-  --
-  --  Here are some example plugins that I've included in the Kickstart repository.
-  --  Uncomment any of the lines below to enable them (you will need to restart nvim).
-  --
-  -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
-  {
+  { -- easy-align
     'junegunn/vim-easy-align',
   },
-  {
+  { -- alabaster
     'p00f/alabaster.nvim',
-    config = function() vim.cmd.colorscheme 'alabaster' end,
+    config = function()
+      vim.cmd.colorscheme 'alabaster'
+      -- vim.opt.background = 'light'
+    end,
   },
-  {
+  { -- obsidian
     'epwalsh/obsidian.nvim',
     version = '*', -- recommended, use latest release instead of latest commit
     lazy = true,
@@ -932,7 +906,7 @@ require('lazy').setup({
       },
     },
   },
-  {
+  { -- neogit
     'NeogitOrg/neogit',
     lazy = true,
     dependencies = {
@@ -949,6 +923,13 @@ require('lazy').setup({
       { '<leader>gg', '<cmd>Neogit<cr>', desc = 'Show Neogit UI' },
     },
   },
+  { -- typst preview
+    'chomosuke/typst-preview.nvim',
+    lazy = false, -- or ft = 'typst'
+    version = '1.*',
+    opts = {}, -- lazy.nvim will implicitly calls `setup {}`
+  },
+  { 'barrettruth/canola.nvim' },
 }, { ---@diagnostic disable-line: missing-fields
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
