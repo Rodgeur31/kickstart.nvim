@@ -628,6 +628,15 @@ require('lazy').setup({
           },
         },
       })
+      vim.lsp.config('jetls', {
+        cmd = {
+          'jetls',
+          'serve',
+        },
+        filetypes = { 'julia' },
+        root_markers = { 'Project.toml' },
+      })
+      -- vim.lsp.enable 'jetls'
     end,
   },
 
@@ -929,7 +938,20 @@ require('lazy').setup({
     version = '1.*',
     opts = {}, -- lazy.nvim will implicitly calls `setup {}`
   },
-  { 'barrettruth/canola.nvim' },
+  {
+    'barrettruth/canola.nvim',
+    config = function()
+      require('oil').setup {
+        default_file_explorer = true,
+        columns = {
+          'icon',
+          'size',
+          'mtime',
+        },
+        show_hidden = true,
+      }
+    end,
+  },
 }, { ---@diagnostic disable-line: missing-fields
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
