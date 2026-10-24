@@ -665,7 +665,7 @@ require('lazy').setup({
           return nil
         else
           return {
-            timeout_ms = 500,
+            timeout_ms = 2000,
             lsp_format = 'fallback',
           }
         end
@@ -873,6 +873,7 @@ require('lazy').setup({
   -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
   { -- easy-align
     'junegunn/vim-easy-align',
+    config = function() vim.g.easy_align_ignore_groups = { 'Comment', 'String' } end,
   },
   { -- alabaster
     'p00f/alabaster.nvim',
@@ -938,7 +939,7 @@ require('lazy').setup({
     version = '1.*',
     opts = {}, -- lazy.nvim will implicitly calls `setup {}`
   },
-  {
+  { -- canola / oil
     'barrettruth/canola.nvim',
     config = function()
       require('oil').setup {
@@ -950,6 +951,27 @@ require('lazy').setup({
         },
         show_hidden = true,
       }
+    end,
+  },
+  { -- overseer ?
+    'stevearc/overseer.nvim',
+    opts = {},
+  },
+  {
+    'quarto-dev/quarto-nvim',
+    dependencies = { 'jmbuhr/otter.nvim', 'nvim-treesitter/nvim-treesitter' },
+    setup = {
+      codeRunner = {
+        enabled = true,
+        default_method = 'slime',
+      },
+    },
+  },
+  {
+    'jpalardy/vim-slime',
+    init = function()
+      vim.g.slime_target = 'zellij'
+      vim.g.slime_default_config = { session_id = 'current', relative_pane = 'right' }
     end,
   },
 }, { ---@diagnostic disable-line: missing-fields
